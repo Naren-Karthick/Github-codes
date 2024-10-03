@@ -1,9 +1,9 @@
 import customtkinter as tk
-from tkinter import *  # type: ignore
+from tkinter import *  
 from tkinter import ttk
 import mysql.connector
 import tkinter.messagebox as tkmb
-import docx
+import docx 
 
 tk.set_appearance_mode("dark")
 tk.set_default_color_theme("blue")
@@ -102,7 +102,6 @@ def admin():
     distub = adtab.add("Display Student Bio")
     distum = adtab.add("Display Student mark")
     adstub = adtab.add("Add Student bio")
-    adstum = adtab.add("Add Student mark")
     adtea = adtab.add("Add Teacher")
     astea = adtab.add("Assign class For teacher")
 
@@ -420,6 +419,41 @@ def admin():
     getbut = tk.CTkButton(adtea, text="Submit", command=tsubmit)
     getbut.pack(pady=30)
 
+    #assign a class for teacher
+    atframe = tk.CTkFrame(astea)
+    atframe.pack()
+    astidlab = tk.CTkLabel(atframe, text="Teacher_Id", font=("Arial", 24))
+    astidlab.grid(row=0, column=0, padx=20, pady=30)
+    astiden = tk.CTkEntry(
+        atframe,
+        placeholder_text="Enter the teacher ID of the Teacher",
+        width=220,
+        height=32,
+    )
+    astiden.grid(row=0, column=1, padx=20, pady=30)
+    asclasslab = tk.CTkLabel(atframe, text="Handling_Classes", font=("Arial", 24))
+    asclasslab.grid(row=1, column=0, padx=20, pady=30)
+    asen = tk.CTkEntry(
+        atframe, placeholder_text="Enter the Classes to assign", width=200, height=32
+    )
+    asen.grid(row=1, column=1, padx=20, pady=30)
+    def updateclass():
+        astid = astiden.get()
+        asclass = asen.get()
+        asclass=','+asclass
+        q=f"update teacher set handling_classes = concat(handling_classes,'{asclass}') where tid={astid}"
+        cur=con.cursor()
+        cur.execute(q)
+        con.commit()
+        astiden.delete(0,END)
+        asen.delete(0,END)
+        tkmb.showinfo("Update", "Updated Succesfully")
+        adtab.set('Display Teacher')
+        tchangein()
+        
+    getbut2 = tk.CTkButton(astea, text="Submit", command=updateclass)
+    getbut2.pack(pady=30)
+
     adwin.mainloop()
 
 
@@ -434,21 +468,17 @@ def teacher(tid):
                 examval, markval, entryval
             )
             cur.execute(q)
+            con.commit()
             donewindow_messagebox = tkmb.showinfo(
                 "Done!", "The record has been updated!"
             )
 
-        mksadd = tk.CTkFrame(twin, width=800, height=800)
-        mksadd.place(x=650, y=200)
-        cb = ttk.Combobox(
-            master=mksadd,
-            values=["1A", "1B"],
-            state="readonly",
-            justify="left",
-            width=30,
-        )
-        cb.pack(padx=5, pady=5)
-        cb.set("Select class")
+        mksadd = tk.CTk()
+        mksadd.geometry("800x600")
+        mksadd.resizable(width = False, height = False)
+        mksadd.title("Modify Marks")
+        
+        
 
         entry = tk.CTkEntry(mksadd, width=200, placeholder_text="Enter the roll number")
         entry.focus()
@@ -574,11 +604,11 @@ def teacher(tid):
             doc.add_paragraph(f"Student Name : {data1[0][2]}")
             doc.add_paragraph(f"Class and Section : {data1[0][3]}")
             doc.add_paragraph(f"Date Of Birth : {data1[0][4]}")
-            # doc.add_page_break()
+            doc.add_page_break()
             doc.add_heading("Marks", level=1)
             record = data1[0]
             tab = doc.add_table(rows=1, cols=9)
-            # tab.style = 'Colorful List'
+            tab.style = 'Colorful List'
             header_cell = tab.rows[0].cells
             header_cell[0].text = "Subject"
             header_cell[1].text = "UT-1"
@@ -591,72 +621,94 @@ def teacher(tid):
             header_cell[8].text = "AT"
 
             for i in data2:  # [(12128,12A,ut1_sub1........)]
-                for j in range(0, 5):
+                ut1tot=(i[2] or 0)  +(i[3] or 0 ) +(i[4] or 0 ) +(i[5] or 0 ) +(i[6] or 0 )
+                ut2tot=(i[7] or 0 ) +(i[8] or 0 ) +(i[9] or 0 ) +(i[10] or 0) +(i[11] or 0) 
+                ut3tot=(i[12] or 0 ) +(i[13] or 0) +(i[14] or 0) +(i[15] or 0) +(i[16] or 0) 
+                quatot=(i[17] or 0 )+(i[18] or 0) +(i[19] or 0) +(i[20] or 0) +(i[21] or 0) 
+                ut4tot=(i[22] or 0 )+(i[23] or 0) +(i[24] or 0) +(i[25] or 0) +(i[26] or 0) 
+                ut5tot=(i[27] or 0 )+(i[28] or 0) +(i[29] or 0) +(i[30] or 0) +(i[31] or 0) 
+                hattot=(i[32] or 0 )+(i[33] or 0) +(i[34] or 0) +(i[35] or 0) +(i[36] or 0) 
+                auttot=(i[37] or 0 )+(i[38] or 0) +(i[39] or 0) +(i[40] or 0) +(i[41] or 0) 
+                for j in range(0, 6):
                     row_cells = tab.add_row().cells
+                    
                     if j == 0:
                         row_cells[0].text = "Sub1"
-                        row_cells[1].text = str(i[2])
-                        row_cells[2].text = str(i[7])
-                        row_cells[3].text = str(i[12])
-                        row_cells[4].text = str(i[17])
-                        row_cells[5].text = str(i[22])
-                        row_cells[6].text = str(i[27])
-                        row_cells[7].text = str(i[32])
-                        row_cells[8].text = str(i[37])
+                        row_cells[1].text = str(i[2]) or 0
+                        row_cells[2].text = str(i[7]) or 0
+                        row_cells[3].text = str(i[12]) or 0
+                        row_cells[4].text = str(i[17]) or 0
+                        row_cells[5].text = str(i[22]) or 0
+                        row_cells[6].text = str(i[27]) or 0
+                        row_cells[7].text = str(i[32]) or 0
+                        row_cells[8].text = str(i[37]) or 0
 
                     elif j == 1:
                         row_cells[0].text = "Sub2"
-                        row_cells[1].text = str(i[3])
-                        row_cells[2].text = str(i[8])
-                        row_cells[3].text = str(i[13])
-                        row_cells[4].text = str(i[18])
-                        row_cells[5].text = str(i[23])
-                        row_cells[6].text = str(i[28])
-                        row_cells[7].text = str(i[33])
-                        row_cells[8].text = str(i[38])
+                        row_cells[1].text = str(i[3]) or 0
+                        row_cells[2].text = str(i[8]) or 0
+                        row_cells[3].text = str(i[13]) or 0
+                        row_cells[4].text = str(i[18]) or 0
+                        row_cells[5].text = str(i[23]) or 0
+                        row_cells[6].text = str(i[28]) or 0
+                        row_cells[7].text = str(i[33]) or 0
+                        row_cells[8].text = str(i[38]) or 0
 
                     elif j == 2:
                         row_cells[0].text = "Sub3"
-                        row_cells[1].text = str(i[4])
-                        row_cells[2].text = str(i[9])
-                        row_cells[3].text = str(i[14])
-                        row_cells[4].text = str(i[19])
-                        row_cells[5].text = str(i[24])
-                        row_cells[6].text = str(i[29])
-                        row_cells[7].text = str(i[34])
-                        row_cells[8].text = str(i[39])
+                        row_cells[1].text = str(i[4]) or 0
+                        row_cells[2].text = str(i[9]) or 0
+                        row_cells[3].text = str(i[14]) or 0
+                        row_cells[4].text = str(i[19]) or 0
+                        row_cells[5].text = str(i[24]) or 0
+                        row_cells[6].text = str(i[29]) or 0
+                        row_cells[7].text = str(i[34]) or 0
+                        row_cells[8].text = str(i[39]) or 0
 
                     elif j == 3:
                         row_cells[0].text = "Sub4"
-                        row_cells[1].text = str(i[5])
-                        row_cells[2].text = str(i[10])
-                        row_cells[3].text = str(i[15])
-                        row_cells[4].text = str(i[20])
-                        row_cells[5].text = str(i[25])
-                        row_cells[6].text = str(i[30])
-                        row_cells[7].text = str(i[35])
-                        row_cells[8].text = str(i[40])
+                        row_cells[1].text = str(i[5])  or 0
+                        row_cells[2].text = str(i[10]) or 0
+                        row_cells[3].text = str(i[15]) or 0
+                        row_cells[4].text = str(i[20]) or 0
+                        row_cells[5].text = str(i[25]) or 0
+                        row_cells[6].text = str(i[30]) or 0
+                        row_cells[7].text = str(i[35]) or 0
+                        row_cells[8].text = str(i[40]) or 0
 
                     elif j == 4:
                         row_cells[0].text = "Sub5"
-                        row_cells[1].text = str(i[6])
-                        row_cells[2].text = str(i[11])
-                        row_cells[3].text = str(i[16])
-                        row_cells[4].text = str(i[21])
-                        row_cells[5].text = str(i[26])
-                        row_cells[6].text = str(i[31])
-                        row_cells[7].text = str(i[36])
-                        row_cells[8].text = str(i[41])
+                        row_cells[1].text = str(i[6])  or 0
+                        row_cells[2].text = str(i[11]) or 0
+                        row_cells[3].text = str(i[16]) or 0
+                        row_cells[4].text = str(i[21]) or 0
+                        row_cells[5].text = str(i[26]) or 0
+                        row_cells[6].text = str(i[31]) or 0
+                        row_cells[7].text = str(i[36]) or 0
+                        row_cells[8].text = str(i[41]) or 0
+                    
+                    elif j==5:
+                        row_cells[0].text = "Total"
+                        row_cells[1].text = str(ut1tot)  or 0
+                        row_cells[2].text = str(ut2tot) or 0
+                        row_cells[3].text = str(ut3tot) or 0
+                        row_cells[4].text = str(quatot) or 0
+                        row_cells[5].text = str(ut4tot) or 0
+                        row_cells[6].text = str(ut5tot) or 0
+                        row_cells[7].text = str(hattot) or 0
+                        row_cells[8].text = str(auttot) or 0
+
 
             doc.save(f"{id1}.docx")
             tkmb.showinfo("Done!", "Saved!")
 
-        gwin = tk.CTkFrame(twin, width=500, height=450)
-        gwin.place(x=650, y=200)
+        gwin = tk.CTk()
+        gwin.title("Generate a report card")
         stuid = tk.CTkEntry(gwin, placeholder_text="Enter the student id")
         stuid.pack(padx=20, pady=30)
         submitb = tk.CTkButton(gwin, text="Submit", command=dummyfunc)
         submitb.pack(padx=20, pady=30)
+        gwin.mainloop()
 
     twin = tk.CTk()
     twin.state("zoomed")
@@ -679,9 +731,21 @@ def teacher(tid):
 
 
 def student(sid):
+    def display_button():
+        q = f"select * from studentmark where sid = {sid}"
+        cur.execute(q)
+        dat12 = cur.fetchall()
+        newin = tk.CTk()
+        
+        newin.geometry('600x600')
+
+        newin.mainloop()
+        
     swin = tk.CTk()
-    swin.geometry("1300x700+0+0")
+    swin.geometry("500x700")
     swin.title(sid)
+    disp_mark = tk.CTkButton(swin, text = "Display Marks", width=100, command=display_button)
+    disp_mark.place(x = 250, y = 300)
 
     swin.mainloop()
 
