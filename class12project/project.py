@@ -1,9 +1,9 @@
 import customtkinter as tk
-from tkinter import *  
+from tkinter import *
 from tkinter import ttk
 import mysql.connector
 import tkinter.messagebox as tkmb
-import docx 
+import docx
 
 tk.set_appearance_mode("dark")
 tk.set_default_color_theme("blue")
@@ -100,7 +100,7 @@ def admin():
     adtab.pack(padx=20, pady=20)
     distea = adtab.add("Display Teacher")
     distub = adtab.add("Display Student Bio")
-    distum = adtab.add("Display Student mark")
+    # distum = adtab.add("Display Student mark")
     adstub = adtab.add("Add Student bio")
     adtea = adtab.add("Add Teacher")
     astea = adtab.add("Assign class For teacher")
@@ -185,7 +185,7 @@ def admin():
         tree2.insert(parent="", index="end", iid=i, values=sdata[i])  # type: ignore
 
     # display student mark
-    def getstum(x):
+    '''def getstum(x):
         cur = con.cursor()
 
         if x == "All":
@@ -251,7 +251,7 @@ def admin():
     smdata = cur.fetchall()
 
     for i in range(len(smdata)):
-        tree3.insert(parent="", index="end", iid=i, values=smdata[i])  # type: ignore
+        tree3.insert(parent="", index="end", iid=i, values=smdata[i])  # type: ignore'''
 
     # add student bio
     inframe = tk.CTkFrame(adstub)
@@ -326,6 +326,9 @@ def admin():
         cur = con.cursor()
         sql = f"insert into studentbio values({admn},'{spass}','{name}','{class_sec}','{dob}','{fname}','{mname}')"
         cur.execute(sql)
+        con.commit()
+        sql2 =f"insert into studentmark(sid,sclass) values({admn},'{class_sec}')"
+        cur.execute(sql2)
         con.commit()
         adiden.delete(0, END)
         namen.delete(0, END)
@@ -419,7 +422,7 @@ def admin():
     getbut = tk.CTkButton(adtea, text="Submit", command=tsubmit)
     getbut.pack(pady=30)
 
-    #assign a class for teacher
+    # assign a class for teacher
     atframe = tk.CTkFrame(astea)
     atframe.pack()
     astidlab = tk.CTkLabel(atframe, text="Teacher_Id", font=("Arial", 24))
@@ -437,20 +440,21 @@ def admin():
         atframe, placeholder_text="Enter the Classes to assign", width=200, height=32
     )
     asen.grid(row=1, column=1, padx=20, pady=30)
+
     def updateclass():
         astid = astiden.get()
         asclass = asen.get()
-        asclass=','+asclass
-        q=f"update teacher set handling_classes = concat(handling_classes,'{asclass}') where tid={astid}"
-        cur=con.cursor()
+        asclass = "," + asclass
+        q = f"update teacher set handling_classes = concat(handling_classes,'{asclass}') where tid={astid}"
+        cur = con.cursor()
         cur.execute(q)
         con.commit()
-        astiden.delete(0,END)
-        asen.delete(0,END)
+        astiden.delete(0, END)
+        asen.delete(0, END)
         tkmb.showinfo("Update", "Updated Succesfully")
-        adtab.set('Display Teacher')
+        adtab.set("Display Teacher")
         tchangein()
-        
+
     getbut2 = tk.CTkButton(astea, text="Submit", command=updateclass)
     getbut2.pack(pady=30)
 
@@ -475,10 +479,8 @@ def teacher(tid):
 
         mksadd = tk.CTk()
         mksadd.geometry("800x600")
-        mksadd.resizable(width = False, height = False)
+        mksadd.resizable(width=False, height=False)
         mksadd.title("Modify Marks")
-        
-        
 
         entry = tk.CTkEntry(mksadd, width=200, placeholder_text="Enter the roll number")
         entry.focus()
@@ -608,7 +610,7 @@ def teacher(tid):
             doc.add_heading("Marks", level=1)
             record = data1[0]
             tab = doc.add_table(rows=1, cols=9)
-            tab.style = 'Colorful List'
+            tab.style = "Colorful List"
             header_cell = tab.rows[0].cells
             header_cell[0].text = "Subject"
             header_cell[1].text = "UT-1"
@@ -621,17 +623,61 @@ def teacher(tid):
             header_cell[8].text = "AT"
 
             for i in data2:  # [(12128,12A,ut1_sub1........)]
-                ut1tot=(i[2] or 0)  +(i[3] or 0 ) +(i[4] or 0 ) +(i[5] or 0 ) +(i[6] or 0 )
-                ut2tot=(i[7] or 0 ) +(i[8] or 0 ) +(i[9] or 0 ) +(i[10] or 0) +(i[11] or 0) 
-                ut3tot=(i[12] or 0 ) +(i[13] or 0) +(i[14] or 0) +(i[15] or 0) +(i[16] or 0) 
-                quatot=(i[17] or 0 )+(i[18] or 0) +(i[19] or 0) +(i[20] or 0) +(i[21] or 0) 
-                ut4tot=(i[22] or 0 )+(i[23] or 0) +(i[24] or 0) +(i[25] or 0) +(i[26] or 0) 
-                ut5tot=(i[27] or 0 )+(i[28] or 0) +(i[29] or 0) +(i[30] or 0) +(i[31] or 0) 
-                hattot=(i[32] or 0 )+(i[33] or 0) +(i[34] or 0) +(i[35] or 0) +(i[36] or 0) 
-                auttot=(i[37] or 0 )+(i[38] or 0) +(i[39] or 0) +(i[40] or 0) +(i[41] or 0) 
+                ut1tot = (
+                    (i[2] or 0) + (i[3] or 0) + (i[4] or 0) + (i[5] or 0) + (i[6] or 0)
+                )
+                ut2tot = (
+                    (i[7] or 0)
+                    + (i[8] or 0)
+                    + (i[9] or 0)
+                    + (i[10] or 0)
+                    + (i[11] or 0)
+                )
+                ut3tot = (
+                    (i[12] or 0)
+                    + (i[13] or 0)
+                    + (i[14] or 0)
+                    + (i[15] or 0)
+                    + (i[16] or 0)
+                )
+                quatot = (
+                    (i[17] or 0)
+                    + (i[18] or 0)
+                    + (i[19] or 0)
+                    + (i[20] or 0)
+                    + (i[21] or 0)
+                )
+                ut4tot = (
+                    (i[22] or 0)
+                    + (i[23] or 0)
+                    + (i[24] or 0)
+                    + (i[25] or 0)
+                    + (i[26] or 0)
+                )
+                ut5tot = (
+                    (i[27] or 0)
+                    + (i[28] or 0)
+                    + (i[29] or 0)
+                    + (i[30] or 0)
+                    + (i[31] or 0)
+                )
+                hattot = (
+                    (i[32] or 0)
+                    + (i[33] or 0)
+                    + (i[34] or 0)
+                    + (i[35] or 0)
+                    + (i[36] or 0)
+                )
+                auttot = (
+                    (i[37] or 0)
+                    + (i[38] or 0)
+                    + (i[39] or 0)
+                    + (i[40] or 0)
+                    + (i[41] or 0)
+                )
                 for j in range(0, 6):
                     row_cells = tab.add_row().cells
-                    
+
                     if j == 0:
                         row_cells[0].text = "Sub1"
                         row_cells[1].text = str(i[2]) or 0
@@ -667,7 +713,7 @@ def teacher(tid):
 
                     elif j == 3:
                         row_cells[0].text = "Sub4"
-                        row_cells[1].text = str(i[5])  or 0
+                        row_cells[1].text = str(i[5]) or 0
                         row_cells[2].text = str(i[10]) or 0
                         row_cells[3].text = str(i[15]) or 0
                         row_cells[4].text = str(i[20]) or 0
@@ -678,7 +724,7 @@ def teacher(tid):
 
                     elif j == 4:
                         row_cells[0].text = "Sub5"
-                        row_cells[1].text = str(i[6])  or 0
+                        row_cells[1].text = str(i[6]) or 0
                         row_cells[2].text = str(i[11]) or 0
                         row_cells[3].text = str(i[16]) or 0
                         row_cells[4].text = str(i[21]) or 0
@@ -686,10 +732,10 @@ def teacher(tid):
                         row_cells[6].text = str(i[31]) or 0
                         row_cells[7].text = str(i[36]) or 0
                         row_cells[8].text = str(i[41]) or 0
-                    
-                    elif j==5:
+
+                    elif j == 5:
                         row_cells[0].text = "Total"
-                        row_cells[1].text = str(ut1tot)  or 0
+                        row_cells[1].text = str(ut1tot) or 0
                         row_cells[2].text = str(ut2tot) or 0
                         row_cells[3].text = str(ut3tot) or 0
                         row_cells[4].text = str(quatot) or 0
@@ -697,7 +743,6 @@ def teacher(tid):
                         row_cells[6].text = str(ut5tot) or 0
                         row_cells[7].text = str(hattot) or 0
                         row_cells[8].text = str(auttot) or 0
-
 
             doc.save(f"{id1}.docx")
             tkmb.showinfo("Done!", "Saved!")
@@ -736,16 +781,156 @@ def student(sid):
         cur.execute(q)
         dat12 = cur.fetchall()
         newin = tk.CTk()
-        
-        newin.geometry('600x600')
+        newin.geometry("700x700")
+        tree3 = ttk.Treeview(newin, show="headings", height=7)
+        tree3.pack(padx=20, pady=30)
+        tree3["columns"] = (
+            "sub\\test",
+            "ut1",
+            "ut2",
+            "ut3",
+            "quarterly",
+            "ut4",
+            "halfyearly",
+            "ut5",
+            "annualexam",
+        )
+        tree3.column("#0", width=-1, anchor="center")
+        tree3.column("sub\\test", width=100, anchor="center")
+        tree3.column("ut1", width=50, anchor="center")
+        tree3.column("ut2", width=50, anchor="center")
+        tree3.column("ut3", width=50, anchor="center")
+        tree3.column("quarterly", width=100, anchor="center")
+        tree3.column("ut4", width=50, anchor="center")
+        tree3.column("halfyearly", width=100, anchor="center")
+        tree3.column("ut5", width=50, anchor="center")
+        tree3.column("annualexam", width=100, anchor="center")
+
+        tree3.heading("sub\\test", text="Sub\\Test")
+        tree3.heading("ut1", text="UT-1")
+        tree3.heading("ut2", text="UT-2")
+        tree3.heading("ut3", text="UT-3")
+        tree3.heading("quarterly", text="Quarterly")
+        tree3.heading("ut4", text="UT-4")
+        tree3.heading("halfyearly", text="Half-Yearly")
+        tree3.heading("ut5", text="UT-5")
+        tree3.heading("annualexam", text="Annual")
+        for i in dat12:
+            for j in range(0, 6):
+                if j == 0:
+                    val = ["Sub1", i[2], i[7], i[12], i[17], i[22], i[27], i[32], i[37]]
+                    tree3.insert(parent="", index="end", iid=j, values=val)
+                if j == 1:
+                    val = ["Sub2", i[3], i[8], i[13], i[18], i[23], i[28], i[33], i[38]]
+                    tree3.insert(parent="", index="end", iid=j, values=val)
+                if j == 2:
+                    val = ["Sub3", i[4], i[9], i[14], i[19], i[24], i[29], i[34], i[39]]
+                    tree3.insert(parent="", index="end", iid=j, values=val)
+                if j == 3:
+                    val = [
+                        "Sub4",
+                        i[5],
+                        i[10],
+                        i[15],
+                        i[20],
+                        i[25],
+                        i[30],
+                        i[35],
+                        i[40],
+                    ]
+                    tree3.insert(parent="", index="end", iid=j, values=val)
+                if j == 4:
+                    val = [
+                        "Sub5",
+                        i[6],
+                        i[11],
+                        i[16],
+                        i[21],
+                        i[26],
+                        i[31],
+                        i[36],
+                        i[41],
+                    ]
+                    tree3.insert(parent="", index="end", iid=j, values=val)
+                if j == 5:
+                    ut1tot = (
+                        (i[2] or 0)
+                        + (i[3] or 0)
+                        + (i[4] or 0)
+                        + (i[5] or 0)
+                        + (i[6] or 0)
+                    )
+                    ut2tot = (
+                        (i[7] or 0)
+                        + (i[8] or 0)
+                        + (i[9] or 0)
+                        + (i[10] or 0)
+                        + (i[11] or 0)
+                    )
+                    ut3tot = (
+                        (i[12] or 0)
+                        + (i[13] or 0)
+                        + (i[14] or 0)
+                        + (i[15] or 0)
+                        + (i[16] or 0)
+                    )
+                    quatot = (
+                        (i[17] or 0)
+                        + (i[18] or 0)
+                        + (i[19] or 0)
+                        + (i[20] or 0)
+                        + (i[21] or 0)
+                    )
+                    ut4tot = (
+                        (i[22] or 0)
+                        + (i[23] or 0)
+                        + (i[24] or 0)
+                        + (i[25] or 0)
+                        + (i[26] or 0)
+                    )
+                    ut5tot = (
+                        (i[27] or 0)
+                        + (i[28] or 0)
+                        + (i[29] or 0)
+                        + (i[30] or 0)
+                        + (i[31] or 0)
+                    )
+                    hattot = (
+                        (i[32] or 0)
+                        + (i[33] or 0)
+                        + (i[34] or 0)
+                        + (i[35] or 0)
+                        + (i[36] or 0)
+                    )
+                    auttot = (
+                        (i[37] or 0)
+                        + (i[38] or 0)
+                        + (i[39] or 0)
+                        + (i[40] or 0)
+                        + (i[41] or 0)
+                    )
+                    val = [
+                        "Total",
+                        ut1tot,
+                        ut2tot,
+                        ut3tot,
+                        quatot,
+                        ut4tot,
+                        ut5tot,
+                        hattot,
+                        auttot,
+                    ]
+                    tree3.insert(parent="", index="end", iid=j, values=val)
 
         newin.mainloop()
-        
+
     swin = tk.CTk()
-    swin.geometry("500x700")
+    swin.geometry("500x500")
     swin.title(sid)
-    disp_mark = tk.CTkButton(swin, text = "Display Marks", width=100, command=display_button)
-    disp_mark.place(x = 250, y = 300)
+    disp_mark = tk.CTkButton(
+        swin, text="Display Marks", width=100, command=display_button
+    )
+    disp_mark.place(x=250, y=300)
 
     swin.mainloop()
 
