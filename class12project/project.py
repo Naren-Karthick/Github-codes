@@ -252,30 +252,6 @@ def admin():
     )
     spassn.grid(row=3, column=1)
 
-    def submite(event):
-        admn = adiden.get() or "NULL"
-        name = namen.get() or "NULL"
-        class_sec = classcombo.get() or "NULL"
-        dob = doben.get() or "NULL"
-        fname = fnamen.get() or "NUll"
-        mname = mnamen.get() or "NULL"
-        spass = spassn.get()
-        cur = con.cursor()
-        sql = f"insert into studentbio values({admn},'{spass}','{name}','{class_sec}','{dob}','{fname}','{mname}')"
-        cur.execute(sql)
-        con.commit()
-        sql2 =f"insert into studentmark(sid,sclass) values({admn},'{class_sec}')"
-        cur.execute(sql2)
-        con.commit()
-        adiden.delete(0, END)
-        namen.delete(0, END)
-        doben.delete(0, END)
-        fnamen.delete(0, END)
-        mnamen.delete(0, END)
-        spassn.delete(0, END)
-        tkmb.showinfo("Insert", "Inserted Succesfully")
-        adtab.set("Display Student Bio")
-        changein()
     def submit():
         admn = adiden.get() or "NULL"
         name = namen.get() or "NULL"
@@ -302,7 +278,6 @@ def admin():
         changein()
 
     getbut = tk.CTkButton(adstub, text="Submit", command=submit)
-    getbut.bind('<Return>',submite)
     getbut.pack(pady=30)
 
     # add teacher
@@ -380,26 +355,8 @@ def admin():
         adtab.set("Display Teacher")
 
         tchangein()
-    def tsubmite(event):
-        tid = tiden.get() or "NULL"
-        tname = tnamen.get() or "NULL"
-        classt = tclasscombo.get() or "NULL"
-        hanclass = hanen.get() or "NULL"
-        tpass1 = tpassen.get() or "NUll"
-        cur = con.cursor()
-        sql = f"insert into teacher values({tid},'{tpass1}','{tname}','{classt}','{hanclass}')"
-        cur.execute(sql)
-        con.commit()
-        tiden.delete(0, END)
-        tnamen.delete(0, END)
-        hanen.delete(0, END)
-        tpassen.delete(0, END)
-        tkmb.showinfo("Insert", "Inserted Succesfully")
-        adtab.set("Display Teacher")
-
-        tchangein()
+    
     getbut2 = tk.CTkButton(adtea, text="Submit", command=tsubmit)
-    getbut2.bind('<Return>',tsubmite)
     getbut2.pack(pady=30)
 
     # assign a class for teacher
@@ -434,21 +391,8 @@ def admin():
         tkmb.showinfo("Update", "Updated Succesfully")
         adtab.set("Display Teacher")
         tchangein()
-    def updateclasse(event):
-        astid = astiden.get()
-        asclass = asen.get()
-        asclass = "," + asclass
-        q = f"update teacher set handling_classes = concat(handling_classes,'{asclass}') where tid={astid}"
-        cur = con.cursor()
-        cur.execute(q)
-        con.commit()
-        astiden.delete(0, END)
-        asen.delete(0, END)
-        tkmb.showinfo("Update", "Updated Succesfully")
-        adtab.set("Display Teacher")
-        tchangein()
+    
     getbut3 = tk.CTkButton(astea, text="Submit", command=updateclass)
-    getbut3.bind('<Return>',updateclasse)
     getbut3.pack(pady=30)
 
     adwin.mainloop()
@@ -469,19 +413,7 @@ def teacher(tid):
             donewindow_messagebox = tkmb.showinfo(
                 "Done!", "The record has been updated!"
             )
-        def change_markse(event):
-            examval = exam.get()
-            entryval = entry.get()
-            markval = mark.get()
-
-            q = "update studentmark set {} = {} where sid = {}".format(
-                examval, markval, entryval
-            )
-            cur.execute(q)
-            con.commit()
-            donewindow_messagebox = tkmb.showinfo(
-                "Done!", "The record has been updated!"
-            )
+        
         mksadd = tk.CTk()
         mksadd.geometry("800x600")
         mksadd.resizable(width=False, height=False)
@@ -590,7 +522,6 @@ def teacher(tid):
         dobut = tk.CTkButton(
             mksadd, width=200, text="Click to do the changes", command=change_marks
         )
-        dobut.bind('<Return>',change_markse)
         dobut.pack()
 
         mksadd.mainloop()
@@ -938,10 +869,17 @@ def student(sid):
     swin = tk.CTk()
     swin.geometry("500x500")
     swin.title(sid)
+
+    slabel = tk.CTkLabel(swin,text='Student Code',font=('Arial',20))
+    slabel.place(x=200,y=270)
+
+    slabel2 = tk.CTkLabel(swin,text=sid,font=('Arial',18))
+    slabel2.place(x=230,y=300)
+    
     disp_mark = tk.CTkButton(
         swin, text="Display Marks", width=100, command=display_button
     )
-    disp_mark.place(x=250, y=300)
+    disp_mark.place(x=350, y=300)
 
     swin.mainloop()
 
